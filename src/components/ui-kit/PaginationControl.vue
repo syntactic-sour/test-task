@@ -29,18 +29,20 @@ const currentLimit = ref<number>(defaultLimit)
       <li v-if="currentPage > 1">
         <RouterLink
           :to="{ query: { ...$route.query, [queryParamsAlias.pageParam]: currentPage - 1 } }"
+          @click="$emit('set-page', currentPage - 1)"
         >
           Prev
         </RouterLink>
       </li>
       <li v-for="page in pages" :key="page">
-        <RouterLink :to="{ query: { ...$route.query, page } }">
+        <RouterLink :to="{ query: { ...$route.query, page } }" @click="$emit('set-page', page)">
           {{ page }}
         </RouterLink>
       </li>
       <li v-if="currentPage < pages">
         <RouterLink
           :to="{ query: { ...$route.query, [queryParamsAlias.pageParam]: currentPage + 1 } }"
+          @click="$emit('set-page', currentPage + 1)"
         >
           Next
         </RouterLink>

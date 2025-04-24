@@ -1,10 +1,13 @@
-import { computed, ref, watch, type ComputedRef } from 'vue'
+import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
 import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
 export function useCategories(
   paginationApiParams: ComputedRef<PaginationAPIPartial>,
-  { setTotal, parentId }: { setTotal: (total: number) => void; parentId?: ComputedRef<string> },
+  {
+    setTotal,
+    parentId,
+  }: { setTotal: (total: number) => void; parentId?: ComputedRef<string> | Ref<string> },
 ) {
   const url = computed(() => {
     const params = new URLSearchParams({
@@ -39,8 +42,7 @@ export function useCategories(
       isLoading.value = false
       return
     }
-    // Save root categories only
-    collection.value.push(...(newValue.items || []).filter((item: CategoryItem) => !item.parentId))
+    collection.value.push(...(newValue.items || []))
     setTotal(newValue.total)
     isLoading.value = false
   })
