@@ -1,4 +1,4 @@
-// Originally published in https://github.com/syntactic-sour/vue-pagination
+// Based on https://github.com/syntactic-sour/vue-pagination
 // Written in TDD style
 
 import { computed, ref } from 'vue'
@@ -76,22 +76,9 @@ export function usePagination({
     }
   }
 
-  function setNextPage() {
-    if (isFinite(total.value) && currentPage.value === pagesTotal.value) {
-      return
-    }
-    setPage(currentPage.value + 1)
-  }
-
-  function setPrevPage() {
-    if (currentPage.value === 1) {
-      return
-    }
-    setPage(currentPage.value - 1)
-  }
-
   return {
     limitsWhitelist,
+    currentLimit,
     currentPage,
     pagesTotal,
     paginationApiParams,
@@ -99,7 +86,5 @@ export function usePagination({
     setTotal,
     setLimit,
     setPage,
-    setNextPage,
-    setPrevPage,
   }
 }
