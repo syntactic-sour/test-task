@@ -1,59 +1,98 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeMount, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
 import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
 import { useCategory } from '@/composables/api/useCategory'
 import { useCategories } from '@/composables/api/useCategories'
+import { useProducts } from '@/composables/api/useProducts'
 
 const route = useRoute()
 
 const categoryId = computed(() =>
-  typeof route.params.id === 'string' ? route.params.id : route.params.id[0],
+  typeof route.params.categoryId === 'string'
+    ? route.params.categoryId
+    : route.params.categoryId[0],
 )
 
-const { category, execute } = useCategory(categoryId)
+const { category, productsIds, execute } = useCategory(categoryId)
 
-const {
-  limitsWhitelist,
-  currentLimit,
-  currentPage,
-  pagesTotal,
-  paginationApiParams,
+const subcategoriesPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]))
+const productsPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]), {
+  showParam: 'showProducts',
+  pageParam: 'productsPage',
+})
 
-  setTotal,
-  setLimit,
-} = usePaginationWithRouter(new Set([1, 10, 20, 30]))
+const subCategories = useCategories(subcategoriesPagination.paginationApiParams, {
+  setTotal: subcategoriesPagination.setTotal,
+  parentId: categoryId,
+})
 
-const {
-  collection,
-  isLoading,
-  execute: executeSubcategories,
-} = useCategories(paginationApiParams, { setTotal, parentId: categoryId })
+onBeforeMount(() => {
+  productsPagination.setInitialParams(
+    productsPagination.getInitialParams(subcategoriesPagination.getInitialParams()),
+  )
+})
+
+const products = useProducts(productsPagination.paginationApiParams, {
+  setTotal: productsPagination.setTotal,
+  productsIds,
+})
 
 execute()
-executeSubcategories()
+subCategories.execute()
+
+watch(category, () => {
+  products.execute()
+})
 </script>
 
 <template>
   <h1>{{ category?.seoTitle || category?.name }}</h1>
 
-  <h2 v-if="!isLoading && collection.length">Subcategories</h2>
-  <ul v-if="!isLoading && collection.length">
-    <li v-for="item in collection" :key="item.id">
-      <RouterLink :to="`/categories/${item.id}`">
-        {{ item.seoTitle || item.name }}
-      </RouterLink>
-    </li>
-  </ul>
-  <strong v-else-if="isLoading">LOADING</strong>
+  <template v-if="!subCategories.isLoading.value && subCategories.collection.value.length">
+    <h2>Subcategories</h2>
+    <ul>
+      <li v-for="item in subCategories.collection.value" :key="item.id">
+        <RouterLink :to="`/categories/${item.id}`">
+          {{ item.seoTitle || item.name }}
+        </RouterLink>
+      </li>
+    </ul>
 
-  <PaginationControl
-    v-if="!isLoading && collection.length"
-    :limit-options="limitsWhitelist"
-    :default-limit="currentLimit"
-    :pages="pagesTotal"
-    :current-page="currentPage"
-    @set-limit="setLimit"
-  />
+    <PaginationControl
+      :limit-options="subcategoriesPagination.limitsWhitelist.value"
+      :default-limit="subcategoriesPagination.currentLimit.value"
+      :pages="subcategoriesPagination.pagesTotal.value"
+      :current-page="subcategoriesPagination.currentPage.value"
+      @set-limit="subcategoriesPagination.setLimit"
+      @set-page="subcategoriesPagination.setPage"
+    />
+  </template>
+  <strong v-else-if="subCategories.isLoading.value">LOADING Subcategories</strong>
+
+  <template v-if="!products.isLoading.value">
+    <h2>Products</h2>
+    <ul>
+      <li v-for="item in products.collection.value" :key="item.id">
+        <RouterLink :to="`/categories/${categoryId}/products/${item.id}`">
+          {{ item.seoTitle || item.name }}
+        </RouterLink>
+      </li>
+    </ul>
+
+    <PaginationControl
+      :limit-options="productsPagination.limitsWhitelist.value"
+      :default-limit="productsPagination.currentLimit.value"
+      :pages="productsPagination.pagesTotal.value"
+      :current-page="productsPagination.currentPage.value"
+      :queryParamsAlias="{
+        showParam: 'showProducts',
+        pageParam: 'productsPage',
+      }"
+      @set-limit="productsPagination.setLimit"
+      @set-page="productsPagination.setPage"
+    />
+  </template>
+  <strong v-else-if="products.isLoading.value">LOADING Subcategories</strong>
 </template>
