@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { useCategories } from '../composables/api/useCategories'
 import PaginationControl from '../components/ui-kit/PaginationControl.vue'
 import { usePaginationWithRouter } from '../composables/ui/usePaginationWithRouter'
+import { onBeforeMount, ref } from 'vue'
 
 const {
   limitsWhitelist,
@@ -13,11 +14,23 @@ const {
 
   setTotal,
   setLimit,
+  setPage,
+  getInitialParams,
+  setInitialParams,
 } = usePaginationWithRouter(new Set([1, 10, 20, 30]))
 
-const { collection, isLoading, execute } = useCategories(paginationApiParams, { setTotal })
+const parentId = ref('0')
+
+const { collection, isLoading, execute } = useCategories(paginationApiParams, {
+  setTotal,
+  parentId,
+})
 
 execute()
+
+onBeforeMount(() => {
+  setInitialParams(getInitialParams())
+})
 </script>
 
 <template>
@@ -38,5 +51,6 @@ execute()
     :pages="pagesTotal"
     :current-page="currentPage"
     @set-limit="setLimit"
+    @set-page="setPage"
   />
 </template>

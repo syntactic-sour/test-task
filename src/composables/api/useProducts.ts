@@ -2,26 +2,26 @@ import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
 import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
-export function useCategories(
+export function useProducts(
   paginationApiParams: ComputedRef<PaginationAPIPartial>,
-  {
-    setTotal,
-    parentId,
-  }: { setTotal: (total: number) => void; parentId?: ComputedRef<string> | Ref<string> },
+  { setTotal, productsIds }: { setTotal: (total: number) => void; productsIds: Ref<string[]> },
 ) {
-  const url = computed(() => {
-    const params = new URLSearchParams({
-      offset: String(paginationApiParams.value.offset || 0),
-      limit: String(paginationApiParams.value.limit || 10),
-    })
-    if (parentId) {
-      params.set('parent', String(parentId.value))
+  const idsChunk = computed(() => {
+    if (productsIds.value.length) {
+      const start = paginationApiParams.value.offset * paginationApiParams.value.limit
+      return productsIds.value.slice(start, start + paginationApiParams.value.limit)
     }
 
-    return 'categories?' + params.toString()
+    return []
   })
 
-  const collection = ref<CategoryItem[]>([])
+  const url = computed(() => {
+    const params = new URLSearchParams({})
+    params.set('productId', idsChunk.value.join(','))
+    return 'products?' + params.toString()
+  })
+
+  const collection = ref<Product[]>([])
   const isLoading = ref<boolean>(false)
 
   async function beforeFetch() {
@@ -33,17 +33,17 @@ export function useCategories(
   const { data, execute } = useFetch({
     fetchOptions: { method: 'GET' },
     beforeFetch,
-  })(url).json<Categories>()
+  })(url).json<Products>()
 
   watch(data, (newValue) => {
     if (!data || !newValue) {
       collection.value = []
-      setTotal(0)
       isLoading.value = false
       return
     }
+
     collection.value.push(...(newValue.items || []))
-    setTotal(newValue.total)
+    setTotal(productsIds.value.length)
     isLoading.value = false
   })
 

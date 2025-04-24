@@ -5,7 +5,7 @@ declare interface Category {
   seoTitle: string
   enabled: boolean
   orderBy: number
-  productIds: Product[]
+  productIds: string[]
   parentId?: string | number
 }
 
