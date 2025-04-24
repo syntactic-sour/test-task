@@ -5,7 +5,20 @@ import { onBeforeMount, watch } from 'vue'
 import { useRoute, useRouter, type LocationQuery, type LocationQueryValue } from 'vue-router'
 import { DEFAULT_PAGINATION_LIMITS, usePagination } from './usePagination'
 
-export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
+export interface QueryParamsAlias {
+  showParam: string
+  pageParam: string
+}
+
+export const DEFAULT_QUERY_PARAMS_ALIAS = {
+  showParam: 'show',
+  pageParam: 'page',
+}
+
+export function usePaginationWithRouter(
+  limits = DEFAULT_PAGINATION_LIMITS,
+  queryParamsAlias: QueryParamsAlias = DEFAULT_QUERY_PARAMS_ALIAS,
+) {
   const route = useRoute()
   const router = useRouter()
 
@@ -22,10 +35,13 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
   } = usePagination({
     limits,
     show:
-      !isNaN(Number(route.query.show)) && limits.has(Number(route.query.show))
-        ? Number(route.query.show)
+      !isNaN(Number(route.query[queryParamsAlias.showParam])) &&
+      limits.has(Number(route.query[queryParamsAlias.showParam]))
+        ? Number(route.query[queryParamsAlias.showParam])
         : undefined,
-    page: isValidQueryPage(route.query.page) ? Number(route.query.page) : undefined,
+    page: isValidQueryPage(route.query[queryParamsAlias.pageParam])
+      ? Number(route.query[queryParamsAlias.pageParam])
+      : undefined,
   })
 
   function isValidQueryPage(page: LocationQueryValue | LocationQueryValue[]) {
@@ -37,8 +53,8 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
   }
 
   onBeforeMount(() => {
-    const isValidLimit = isValidQueryLimit(route.query.show)
-    const isValidPage = isValidQueryPage(route.query.page)
+    const isValidLimit = isValidQueryLimit(route.query[queryParamsAlias.showParam])
+    const isValidPage = isValidQueryPage(route.query[queryParamsAlias.pageParam])
     if (isValidLimit && isValidPage) {
       return
     }
@@ -46,18 +62,18 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
     const newQuery: LocationQuery = {}
 
     if (!isValidLimit) {
-      newQuery.show = String(paginationApiParams.value.limit)
+      newQuery[queryParamsAlias.showParam] = String(paginationApiParams.value.limit)
     }
     if (!isValidPage) {
-      newQuery.page = String(currentPage.value)
+      newQuery[queryParamsAlias.pageParam] = String(currentPage.value)
     }
 
     router.push({ query: newQuery })
   })
 
   onBeforeMount(() => {
-    const isValidLimit = isValidQueryLimit(route.query.show)
-    const isValidPage = isValidQueryPage(route.query.page)
+    const isValidLimit = isValidQueryLimit(route.query[queryParamsAlias.showParam])
+    const isValidPage = isValidQueryPage(route.query[queryParamsAlias.pageParam])
     if (isValidLimit && isValidPage) {
       return
     }
@@ -65,10 +81,10 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
     const newQuery: LocationQuery = {}
 
     if (!isValidLimit) {
-      newQuery.show = String(paginationApiParams.value.limit)
+      newQuery[queryParamsAlias.showParam] = String(paginationApiParams.value.limit)
     }
     if (!isValidPage) {
-      newQuery.page = String(currentPage.value)
+      newQuery[queryParamsAlias.pageParam] = String(currentPage.value)
     }
 
     router.push({ query: newQuery })
@@ -77,16 +93,16 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
   watch(() => route.query, updateQueryParams, { immediate: true })
 
   async function updateQueryParams(queryParams: LocationQuery) {
-    const isValidNewQueryLimit = isValidQueryLimit(queryParams.show)
-    const isValidNewQueryPage = isValidQueryPage(queryParams.page)
+    const isValidNewQueryLimit = isValidQueryLimit(queryParams[queryParamsAlias.showParam])
+    const isValidNewQueryPage = isValidQueryPage(queryParams[queryParamsAlias.pageParam])
     const newQueryParams: LocationQuery = {}
 
     if (!isValidNewQueryLimit) {
-      newQueryParams.show = String(paginationApiParams.value.limit)
+      newQueryParams[queryParamsAlias.showParam] = String(paginationApiParams.value.limit)
     }
 
     if (!isValidNewQueryPage) {
-      newQueryParams.page = String(currentPage.value)
+      newQueryParams[queryParamsAlias.pageParam] = String(currentPage.value)
     }
 
     if (!isValidNewQueryLimit || !isValidNewQueryPage) {
@@ -96,14 +112,14 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
     }
 
     // Important to keep this order. Limit may reset the page to 1
-    _setLimit(Number(queryParams.show))
-    setPage(Number(queryParams.page))
+    _setLimit(Number(queryParams[queryParamsAlias.showParam]))
+    setPage(Number(queryParams[queryParamsAlias.pageParam]))
   }
 
   function setLimit(newLimit: number) {
     _setLimit(newLimit)
     const newQuery: LocationQuery = {
-      page: route.query.page,
+      page: route.query[queryParamsAlias.pageParam],
       show: String(newLimit),
     }
 
