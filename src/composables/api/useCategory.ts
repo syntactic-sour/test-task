@@ -5,7 +5,7 @@ import { useInitMock } from '../mock/useInitMock'
 export function useCategory(id: ComputedRef<string>) {
   const url = ref(`categories/${id.value}`)
   const category = ref<Omit<Category, 'productsIds'> | null>()
-  const productsIds = ref<Product[]>([])
+  const productsIds = ref<string[]>([])
 
   const { data, execute } = useFetch({
     fetchOptions: { method: 'GET' },
