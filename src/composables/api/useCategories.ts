@@ -3,7 +3,7 @@ import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
 export function useCategories(
-  paginationApiParams: ComputedRef<PaginationAPI>,
+  paginationApiParams: ComputedRef<PaginationAPIPartial>,
   { setTotal }: { setTotal: (total: number) => void },
 ) {
   const url = computed(() => {
