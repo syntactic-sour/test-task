@@ -3,7 +3,7 @@ import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
 export function useCategory(id: ComputedRef<string>) {
-  const url = ref(`categories/${id.value}`)
+  const url = ref(`categories/${id.value}?productIds=true`)
   const category = ref<Omit<Category, 'productsIds'> | null>()
   const productsIds = ref<string[]>([])
 
