@@ -25,7 +25,7 @@ export function usePagination({
   const offset = computed(() =>
     currentPage.value > 1 ? (currentPage.value - 1) * currentLimit.value : 0,
   )
-  const paginationApiParams = computed(() => ({
+  const paginationApiParams = computed<PaginationAPIPartial>(() => ({
     offset: offset.value,
     limit: currentLimit.value,
   }))
