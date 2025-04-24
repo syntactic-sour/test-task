@@ -59,7 +59,7 @@ export function usePagination({
   }
 
   function setPage(newPage: number) {
-    if (newPage < 1 || total.value <= (newPage - 1) * currentLimit.value) {
+    if (newPage < 1 || (newPage > 1 && total.value <= (newPage - 1) * currentLimit.value)) {
       throw new Error('Unable to set page that is outside of pagination range')
     }
     currentPage.value = newPage
