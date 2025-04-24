@@ -1,0 +1,27 @@
+/* 
+    This basic layout allows to use position: absolute 
+    for popovers instead of position: fixed
+    Such positioning is better for mobile devices, it helps to
+    avoid zooming issues in fixed elements
+
+    Overflow: hidden on body helps to avoid issues with 
+    double scrolls in some browsers when in pop-overs / modals 
+    scrolling inside that model is required. 
+    For example, this makes scrolling better on small devices 
+    when the device is in landscape orientation
+*/
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+#app {
+  overflow: auto;
+}
