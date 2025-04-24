@@ -1,4 +1,4 @@
-// Originally published in https://github.com/syntactic-sour/vue-pagination
+// Based on https://github.com/syntactic-sour/vue-pagination
 // Written in TDD style
 
 import { onBeforeMount, watch } from 'vue'
@@ -11,15 +11,14 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
 
   const {
     limitsWhitelist,
+    currentLimit,
     currentPage,
     pagesTotal,
     paginationApiParams,
 
     setTotal,
     setPage,
-    setLimit,
-    setPrevPage,
-    setNextPage,
+    setLimit: _setLimit,
   } = usePagination({
     limits,
     show:
@@ -75,45 +74,50 @@ export function usePaginationWithRouter(limits = DEFAULT_PAGINATION_LIMITS) {
     router.push({ query: newQuery })
   })
 
-  watch(
-    () => route.query,
-    async (queryParams) => {
-      const isValidNewQueryLimit = isValidQueryLimit(queryParams.show)
-      const isValidNewQueryPage = isValidQueryPage(queryParams.page)
+  watch(() => route.query, updateQueryParams, { immediate: true })
 
-      const newQueryParams: LocationQuery = {}
+  async function updateQueryParams(queryParams: LocationQuery) {
+    const isValidNewQueryLimit = isValidQueryLimit(queryParams.show)
+    const isValidNewQueryPage = isValidQueryPage(queryParams.page)
+    const newQueryParams: LocationQuery = {}
 
-      if (!isValidNewQueryLimit) {
-        newQueryParams.show = String(paginationApiParams.value.limit)
-      }
+    if (!isValidNewQueryLimit) {
+      newQueryParams.show = String(paginationApiParams.value.limit)
+    }
 
-      if (!isValidNewQueryPage) {
-        newQueryParams.page = String(currentPage.value)
-      }
+    if (!isValidNewQueryPage) {
+      newQueryParams.page = String(currentPage.value)
+    }
 
-      if (!isValidNewQueryLimit || !isValidNewQueryPage) {
-        router.push({ query: newQueryParams })
+    if (!isValidNewQueryLimit || !isValidNewQueryPage) {
+      router.push({ query: newQueryParams })
 
-        return
-      }
+      return
+    }
 
-      // Important to keep this order. Limit may reset the page to 1
-      setLimit(Number(queryParams.show))
-      setPage(Number(queryParams.page))
-    },
-    { immediate: true },
-  )
+    // Important to keep this order. Limit may reset the page to 1
+    _setLimit(Number(queryParams.show))
+    setPage(Number(queryParams.page))
+  }
+
+  function setLimit(newLimit: number) {
+    _setLimit(newLimit)
+    const newQuery: LocationQuery = {
+      page: route.query.page,
+      show: String(newLimit),
+    }
+
+    router.push({ query: newQuery })
+  }
 
   return {
     limitsWhitelist,
+    currentLimit,
     currentPage,
     pagesTotal,
     paginationApiParams,
 
     setTotal,
-    setPage,
     setLimit,
-    setPrevPage,
-    setNextPage,
   }
 }
