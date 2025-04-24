@@ -4,7 +4,7 @@ import { useInitMock } from '../mock/useInitMock'
 
 export function useCategories(
   paginationApiParams: ComputedRef<PaginationAPIPartial>,
-  { setTotal }: { setTotal: (total: number) => void },
+  { setTotal, parentId }: { setTotal: (total: number) => void; parentId?: ComputedRef<string> },
 ) {
   const url = computed(() => {
     const params = new URLSearchParams({
@@ -12,6 +12,10 @@ export function useCategories(
       offset: String(paginationApiParams.value.offset || 0),
       limit: String(paginationApiParams.value.limit || 10),
     })
+    if (parentId) {
+      params.set('parent', String(parentId.value))
+    }
+
     return 'categories?' + params.toString()
   })
 
