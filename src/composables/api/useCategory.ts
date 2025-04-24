@@ -5,8 +5,7 @@ import { useInitMock } from '../mock/useInitMock'
 export function useCategory(id: ComputedRef<string>) {
   const url = ref(`categories/${id.value}`)
   const category = ref<Omit<Category, 'productsIds'> | null>()
-  const productsCollection = ref<Product[]>([])
-  const subCategoriesCollection = ref<Category[]>([])
+  const productsIds = ref<Product[]>([])
 
   const { data, execute } = useFetch({
     fetchOptions: { method: 'GET' },
@@ -16,8 +15,7 @@ export function useCategory(id: ComputedRef<string>) {
   watch(data, (newValue) => {
     if (!data || !newValue) {
       category.value = null
-      productsCollection.value = []
-      subCategoriesCollection.value = []
+      productsIds.value = []
       return
     }
 
@@ -30,9 +28,8 @@ export function useCategory(id: ComputedRef<string>) {
       parentId: newValue.parentId,
     }
 
-    console.log(newValue)
-    productsCollection.value.push(...(newValue?.productIds || []))
+    productsIds.value.push(...(newValue?.productIds || []))
   })
 
-  return { category, productsCollection, subCategoriesCollection, execute }
+  return { category, productsIds, execute }
 }

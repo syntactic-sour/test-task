@@ -8,7 +8,6 @@ export function useCategories(
 ) {
   const url = computed(() => {
     const params = new URLSearchParams({
-      hidden_categories: 'true',
       offset: String(paginationApiParams.value.offset || 0),
       limit: String(paginationApiParams.value.limit || 10),
     })
