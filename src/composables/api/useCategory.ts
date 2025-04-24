@@ -1,9 +1,9 @@
-import { ref, watch, type ComputedRef } from 'vue'
+import { computed, ref, watch, type ComputedRef } from 'vue'
 import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
 export function useCategory(id: ComputedRef<string>) {
-  const url = ref(`categories/${id.value}?productIds=true`)
+  const url = computed(() => `categories/${id.value}?productIds=true`)
   const category = ref<Omit<Category, 'productsIds'> | null>()
   const productsIds = ref<string[]>([])
 
@@ -28,7 +28,7 @@ export function useCategory(id: ComputedRef<string>) {
       parentId: newValue.parentId,
     }
 
-    productsIds.value.push(...(newValue?.productIds || []))
+    productsIds.value = newValue?.productIds || []
   })
 
   return { category, productsIds, execute }

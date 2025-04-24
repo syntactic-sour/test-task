@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, watch } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { computed, onBeforeMount, ref, watch } from 'vue'
+import { onBeforeRouteUpdate, RouterLink, useRoute, type LocationQuery } from 'vue-router'
 import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
 import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
 import { useCategory } from '@/composables/api/useCategory'
@@ -15,6 +15,9 @@ const categoryId = computed(() =>
     : route.params.categoryId[0],
 )
 
+const prevQuery = ref<LocationQuery | null>(null)
+const prevId = ref<string | null>(null)
+
 const { category, productsIds, execute } = useCategory(categoryId)
 
 const subcategoriesPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]))
@@ -28,10 +31,31 @@ const subCategories = useCategories(subcategoriesPagination.paginationApiParams,
   parentId: categoryId,
 })
 
-onBeforeMount(() => {
+function setUrlQueryParams() {
   productsPagination.setInitialParams(
     productsPagination.getInitialParams(subcategoriesPagination.getInitialParams()),
   )
+}
+
+onBeforeMount(setUrlQueryParams)
+onBeforeRouteUpdate((to, from) => {
+  if (to.params.categoryId === from.params.categoryId) {
+    return
+  }
+
+  // Back
+  if (prevId.value === to.params.categoryId && prevQuery.value) {
+    productsPagination.setTotal(Infinity)
+    subcategoriesPagination.setTotal(Infinity)
+    productsPagination.setPage(Number(prevQuery.value['productsPage']))
+    subcategoriesPagination.setPage(Number(prevQuery.value['page']))
+  } else {
+    productsPagination.setPage(1)
+    subcategoriesPagination.setPage(1)
+  }
+
+  prevId.value = from.params.categoryId as string
+  prevQuery.value = from.query
 })
 
 const products = useProducts(productsPagination.paginationApiParams, {
@@ -45,9 +69,16 @@ subCategories.execute()
 watch(category, () => {
   products.execute()
 })
+
+watch(categoryId, () => {
+  execute()
+  setUrlQueryParams()
+})
 </script>
 
 <template>
+  <!-- TODO: proper pagination -->
+  <RouterLink :to="`/categories/`"> Back to root categories </RouterLink>
   <h1>{{ category?.seoTitle || category?.name }}</h1>
 
   <template v-if="!subCategories.isLoading.value && subCategories.collection.value.length">
