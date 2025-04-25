@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import { useInitMock } from './composables/mock/useInitMock'
-import BaseLayout from './components/layouts/BaseLayout.vue'
+import { RouterView, RouterLink } from 'vue-router'
+
+import { useInitMock } from '@/composables/mock/useInitMock'
+import { useCartStore } from '@/stores/cart'
+import BaseLayout from '@/components/layouts/BaseLayout.vue'
+
+const cart = useCartStore()
 
 useInitMock()
 </script>
 
 <template>
   <BaseLayout>
+    <template v-slot:header>
+      <RouterLink to="/categories">Categories list</RouterLink>{{ ' ' }}
+      <RouterLink to="/cart">Cart: {{ cart.productsInCartCount }}</RouterLink>
+    </template>
     <RouterView />
   </BaseLayout>
 </template>

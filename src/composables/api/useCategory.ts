@@ -2,6 +2,7 @@ import { computed, ref, watch, type ComputedRef } from 'vue'
 import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
+// TODO: add isLoading
 export function useCategory(id: ComputedRef<string>) {
   const url = computed(() => `categories/${id.value}?productIds=true`)
   const category = ref<Omit<Category, 'productsIds'> | null>()

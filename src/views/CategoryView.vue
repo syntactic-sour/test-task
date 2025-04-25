@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, watch } from 'vue'
 import { onBeforeRouteUpdate, RouterLink, useRoute, type LocationQuery } from 'vue-router'
+
 import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
 import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
 import { useCategory } from '@/composables/api/useCategory'
