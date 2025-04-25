@@ -21,8 +21,8 @@ const prevId = ref<string | null>(null)
 
 const { category, productsIds, isLoading, execute } = useCategory(categoryId)
 
-const subcategoriesPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]))
-const productsPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]), {
+const subcategoriesPagination = usePaginationWithRouter(new Set([1, 2, 3, 10]))
+const productsPagination = usePaginationWithRouter(new Set([1, 2, 3, 10]), {
   showParam: 'showProducts',
   pageParam: 'productsPage',
 })
@@ -82,49 +82,55 @@ watch(categoryId, () => {
 <template>
   <h1>{{ isLoading || !category ? 'Category' : category.seoTitle || category.name }}</h1>
 
-  <template v-if="!subCategories.isLoading.value && subCategories.collection.value.length">
-    <h2>Subcategories</h2>
-    <ul>
-      <li v-for="item in subCategories.collection.value" :key="item.id">
-        <RouterLink :to="`/categories/${item.id}`">
-          {{ item.seoTitle || item.name }}
-        </RouterLink>
-      </li>
-    </ul>
+  <section>
+    <template v-if="!subCategories.isLoading.value && subCategories.collection.value.length">
+      <h2>Subcategories</h2>
+      <ul>
+        <li v-for="item in subCategories.collection.value" :key="item.id">
+          <RouterLink :to="`/categories/${item.id}`">
+            {{ item.seoTitle || item.name }}
+          </RouterLink>
+        </li>
+      </ul>
 
-    <PaginationControl
-      :limit-options="subcategoriesPagination.limitsWhitelist.value"
-      :default-limit="subcategoriesPagination.currentLimit.value"
-      :pages="subcategoriesPagination.pagesTotal.value"
-      :current-page="subcategoriesPagination.currentPage.value"
-      @set-limit="subcategoriesPagination.setLimit"
-      @set-page="subcategoriesPagination.setPage"
-    />
-  </template>
-  <strong v-else-if="subCategories.isLoading.value">LOADING Subcategories</strong>
+      <PaginationControl
+        pagination-aria-label="Subcategories pagination"
+        :limit-options="subcategoriesPagination.limitsWhitelist.value"
+        :default-limit="subcategoriesPagination.currentLimit.value"
+        :pages="subcategoriesPagination.pagesTotal.value"
+        :current-page="subcategoriesPagination.currentPage.value"
+        @set-limit="subcategoriesPagination.setLimit"
+        @set-page="subcategoriesPagination.setPage"
+      />
+    </template>
+    <strong v-else-if="subCategories.isLoading.value">LOADING Subcategories</strong>
+  </section>
 
-  <template v-if="!products.isLoading.value">
-    <h2>Products</h2>
-    <ul>
-      <li v-for="item in products.collection.value" :key="item.id">
-        <RouterLink :to="`/categories/${categoryId}/products/${item.id}`">
-          {{ item.seoTitle || item.name }}
-        </RouterLink>
-      </li>
-    </ul>
+  <section>
+    <template v-if="!products.isLoading.value">
+      <h2>Products</h2>
+      <ul>
+        <li v-for="item in products.collection.value" :key="item.id">
+          <RouterLink :to="`/categories/${categoryId}/products/${item.id}`">
+            {{ item.seoTitle || item.name }}
+          </RouterLink>
+        </li>
+      </ul>
 
-    <PaginationControl
-      :limit-options="productsPagination.limitsWhitelist.value"
-      :default-limit="productsPagination.currentLimit.value"
-      :pages="productsPagination.pagesTotal.value"
-      :current-page="productsPagination.currentPage.value"
-      :queryParamsAlias="{
-        showParam: 'showProducts',
-        pageParam: 'productsPage',
-      }"
-      @set-limit="productsPagination.setLimit"
-      @set-page="productsPagination.setPage"
-    />
-  </template>
-  <strong v-else-if="products.isLoading.value">LOADING Subcategories</strong>
+      <PaginationControl
+        pagination-aria-label="Products pagination"
+        :limit-options="productsPagination.limitsWhitelist.value"
+        :default-limit="productsPagination.currentLimit.value"
+        :pages="productsPagination.pagesTotal.value"
+        :current-page="productsPagination.currentPage.value"
+        :queryParamsAlias="{
+          showParam: 'showProducts',
+          pageParam: 'productsPage',
+        }"
+        @set-limit="productsPagination.setLimit"
+        @set-page="productsPagination.setPage"
+      />
+    </template>
+    <strong v-else-if="products.isLoading.value">LOADING Products</strong>
+  </section>
 </template>

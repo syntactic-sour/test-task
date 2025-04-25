@@ -28,7 +28,7 @@
 
 .main {
   flex: 1 0 auto;
-  padding: 1rem 2rem;
+  padding: 1rem 1rem;
   width: 100%;
   max-width: 50rem;
   margin: auto;

@@ -23,6 +23,12 @@
   --color-links-hover: var(--vt-c-honolulu-blue);
 
   --color-outline: var(--vt-c-rose-red);
+
+  --color-border: var(--vt-c-taupe-gray);
+
+  --radius-controls: 0.4rem;
+
+  --line-height-text: 1.5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,7 +68,8 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: 1rem;
+  line-height: var(--line-height-text);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -96,4 +103,21 @@ a[href] {
 *:focus {
   outline-offset: 4px;
   outline-color: var(--color-outline);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }

@@ -45,6 +45,7 @@ onBeforeMount(() => {
   <p v-else>No data</p>
 
   <PaginationControl
+    pagination-aria-label="Categories pagination"
     :limit-options="limitsWhitelist"
     :default-limit="currentLimit"
     :pages="pagesTotal"
