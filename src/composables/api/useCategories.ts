@@ -1,7 +1,6 @@
 import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
 
 import { useFetch } from './useFetch'
-import { useInitMock } from '../mock/useInitMock'
 
 export function useCategories({
   parentId,
@@ -26,7 +25,6 @@ export function useCategories({
   const isLoading = ref<boolean>(false)
 
   async function beforeFetch() {
-    await useInitMock()
     collection.value = []
     isLoading.value = true
   }
@@ -37,7 +35,7 @@ export function useCategories({
   })(url).json<Categories>()
 
   watch(data, (newValue) => {
-    if (!data || !newValue) {
+    if (!newValue) {
       collection.value = []
       if (setTotal) {
         setTotal(0)
@@ -45,6 +43,7 @@ export function useCategories({
       isLoading.value = false
       return
     }
+
     collection.value.push(...(newValue.items || []))
     if (setTotal) {
       setTotal(newValue.total)
