@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-import { useCategories } from '../composables/api/useCategories'
-import PaginationControl from '../components/ui-kit/PaginationControl.vue'
-import { usePaginationWithRouter } from '../composables/ui/usePaginationWithRouter'
 import { onBeforeMount, ref } from 'vue'
+import { RouterLink } from 'vue-router'
+
+import { useCategories } from '@/composables/api/useCategories'
+import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
+import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
 
 const {
   limitsWhitelist,
