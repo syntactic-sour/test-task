@@ -19,7 +19,7 @@ const categoryId = computed(() =>
 const prevQuery = ref<LocationQuery | null>(null)
 const prevId = ref<string | null>(null)
 
-const { category, productsIds, execute } = useCategory(categoryId)
+const { category, productsIds, isLoading, execute } = useCategory(categoryId)
 
 const subcategoriesPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]))
 const productsPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]), {
@@ -27,9 +27,10 @@ const productsPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]), {
   pageParam: 'productsPage',
 })
 
-const subCategories = useCategories(subcategoriesPagination.paginationApiParams, {
-  setTotal: subcategoriesPagination.setTotal,
+const subCategories = useCategories({
+  paginationApiParams: subcategoriesPagination.paginationApiParams,
   parentId: categoryId,
+  setTotal: subcategoriesPagination.setTotal,
 })
 
 function setUrlQueryParams() {
@@ -79,9 +80,7 @@ watch(categoryId, () => {
 </script>
 
 <template>
-  <!-- TODO: proper pagination -->
-  <RouterLink :to="`/categories/`"> Back to root categories </RouterLink>
-  <h1>{{ category?.seoTitle || category?.name }}</h1>
+  <h1>{{ isLoading || !category ? 'Category' : category.seoTitle || category.name }}</h1>
 
   <template v-if="!subCategories.isLoading.value && subCategories.collection.value.length">
     <h2>Subcategories</h2>

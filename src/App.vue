@@ -7,6 +7,7 @@ import BaseLayout from '@/components/layouts/BaseLayout.vue'
 
 const cart = useCartStore()
 
+// Mock login
 useInitMock()
 </script>
 

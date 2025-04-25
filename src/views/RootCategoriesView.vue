@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import { useCategories } from '@/composables/api/useCategories'
-import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
 import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
+import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
 
 const {
   limitsWhitelist,
@@ -20,11 +20,9 @@ const {
   setInitialParams,
 } = usePaginationWithRouter(new Set([1, 10, 20, 30]))
 
-const parentId = ref('0')
-
-const { collection, isLoading, execute } = useCategories(paginationApiParams, {
+const { collection, isLoading, execute } = useCategories({
+  paginationApiParams,
   setTotal,
-  parentId,
 })
 
 execute()

@@ -1,6 +1,7 @@
 import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
+import type { BeforeFetchContext } from '@vueuse/core'
+
 import { useFetch } from './useFetch'
-import { useInitMock } from '../mock/useInitMock'
 
 export function useProducts({
   setTotal,
@@ -35,8 +36,10 @@ export function useProducts({
   const collection = ref<Product[]>([])
   const isLoading = ref<boolean>(false)
 
-  async function beforeFetch() {
-    await useInitMock()
+  async function beforeFetch({ cancel }: BeforeFetchContext) {
+    if (!idsChunk.value.length) {
+      cancel()
+    }
     collection.value = []
     isLoading.value = true
   }
@@ -48,7 +51,7 @@ export function useProducts({
   })(url).json<Products>()
 
   watch(data, (newValue) => {
-    if (!data || !newValue) {
+    if (!newValue) {
       collection.value = []
       isLoading.value = false
       return
