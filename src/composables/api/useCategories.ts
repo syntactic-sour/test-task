@@ -1,22 +1,23 @@
 import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
+
 import { useFetch } from './useFetch'
 import { useInitMock } from '../mock/useInitMock'
 
-export function useCategories(
-  paginationApiParams: ComputedRef<PaginationAPIPartial>,
-  {
-    setTotal,
-    parentId,
-  }: { setTotal: (total: number) => void; parentId?: ComputedRef<string> | Ref<string> },
-) {
+export function useCategories({
+  parentId,
+  paginationApiParams,
+  setTotal,
+}: {
+  paginationApiParams: ComputedRef<PaginationAPIPartial>
+  parentId?: ComputedRef<string> | Ref<string>
+  setTotal?: (total: number) => void
+}) {
   const url = computed(() => {
     const params = new URLSearchParams({
       offset: String(paginationApiParams.value.offset || 0),
       limit: String(paginationApiParams.value.limit || 10),
+      parentId: parentId ? String(parentId.value) : '0',
     })
-    if (parentId) {
-      params.set('parent', String(parentId.value))
-    }
 
     return 'categories?' + params.toString()
   })
@@ -38,12 +39,16 @@ export function useCategories(
   watch(data, (newValue) => {
     if (!data || !newValue) {
       collection.value = []
-      setTotal(0)
+      if (setTotal) {
+        setTotal(0)
+      }
       isLoading.value = false
       return
     }
     collection.value.push(...(newValue.items || []))
-    setTotal(newValue.total)
+    if (setTotal) {
+      setTotal(newValue.total)
+    }
     isLoading.value = false
   })
 

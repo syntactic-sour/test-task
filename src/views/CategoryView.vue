@@ -27,9 +27,10 @@ const productsPagination = usePaginationWithRouter(new Set([1, 10, 20, 30]), {
   pageParam: 'productsPage',
 })
 
-const subCategories = useCategories(subcategoriesPagination.paginationApiParams, {
-  setTotal: subcategoriesPagination.setTotal,
+const subCategories = useCategories({
+  paginationApiParams: subcategoriesPagination.paginationApiParams,
   parentId: categoryId,
+  setTotal: subcategoriesPagination.setTotal,
 })
 
 function setUrlQueryParams() {
