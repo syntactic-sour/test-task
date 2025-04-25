@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { useProduct } from '@/composables/api/useProduct'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+
+import { useProduct } from '@/composables/api/useProduct'
+import { useCartStore } from '@/stores/cart'
 
 const route = useRoute()
 
@@ -10,7 +12,7 @@ const productId = computed(() =>
 )
 
 const { product, execute } = useProduct(productId)
-
+const { addProduct } = useCartStore()
 execute()
 </script>
 
@@ -28,4 +30,8 @@ execute()
       style="width: auto"
     />
   </picture>
+  <strong>{{ product?.price }}</strong>
+  <button :disabled="!product" type="button" @click="() => product && addProduct(product.id)">
+    Buy
+  </button>
 </template>
