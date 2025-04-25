@@ -7,7 +7,7 @@ export function useProducts({
   productsIds,
   paginationApiParams,
 }: {
-  setTotal: (total: number) => void
+  setTotal?: (total: number) => void
   productsIds: Ref<string[]>
   paginationApiParams?: ComputedRef<PaginationAPIPartial>
 }) {
@@ -52,7 +52,9 @@ export function useProducts({
     }
 
     collection.value.push(...(newValue.items || []))
-    setTotal(productsIds.value.length)
+    if (setTotal) {
+      setTotal(productsIds.value.length)
+    }
     isLoading.value = false
   })
 
