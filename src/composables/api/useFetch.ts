@@ -7,11 +7,12 @@ const BASE_URL = import.meta.env.VITE_API_BASE
 
 export interface useFetchOptions {
   fetchOptions?: RequestInit
+  manual?: boolean
   beforeFetch?: () => Promise<unknown>
   afterFetch?: UseFetchOptions['afterFetch']
 }
 
-export function useFetch({ fetchOptions, beforeFetch, afterFetch }: useFetchOptions) {
+export function useFetch({ fetchOptions, manual, beforeFetch, afterFetch }: useFetchOptions) {
   const authStore = useAuthStore()
   const clientStoreStore = useClientStoreStore()
 
@@ -27,7 +28,7 @@ export function useFetch({ fetchOptions, beforeFetch, afterFetch }: useFetchOpti
     baseUrl,
     options: {
       immediate: false,
-      refetch: true,
+      refetch: !manual,
       async beforeFetch({ options, cancel }) {
         if (beforeFetch) {
           await beforeFetch()

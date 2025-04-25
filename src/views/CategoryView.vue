@@ -59,7 +59,8 @@ onBeforeRouteUpdate((to, from) => {
   prevQuery.value = from.query
 })
 
-const products = useProducts(productsPagination.paginationApiParams, {
+const products = useProducts({
+  paginationApiParams: productsPagination.paginationApiParams,
   setTotal: productsPagination.setTotal,
   productsIds,
 })
