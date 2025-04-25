@@ -16,7 +16,7 @@ export function useCategories({
     const params = new URLSearchParams({
       offset: String(paginationApiParams.value.offset || 0),
       limit: String(paginationApiParams.value.limit || 10),
-      parentId: parentId ? String(parentId.value) : '0',
+      parent: parentId ? String(parentId.value) : '0',
     })
 
     return 'categories?' + params.toString()
