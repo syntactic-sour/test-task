@@ -6,10 +6,12 @@ export function useProducts({
   setTotal,
   productsIds,
   paginationApiParams,
+  manual,
 }: {
   setTotal?: (total: number) => void
-  productsIds: Ref<string[]>
+  productsIds: Ref<string[] | number[]> | ComputedRef<string[] | number[]>
   paginationApiParams?: ComputedRef<PaginationAPIPartial>
+  manual?: boolean
 }) {
   const idsChunk = computed(() => {
     if (!paginationApiParams) {
@@ -41,6 +43,7 @@ export function useProducts({
 
   const { data, execute } = useFetch({
     fetchOptions: { method: 'GET' },
+    manual,
     beforeFetch,
   })(url).json<Products>()
 
