@@ -23,17 +23,32 @@
 }
 
 .header {
-  min-height: 100px;
-  background-color: black;
+  padding: 0.5rem 1rem;
 }
 
 .main {
   flex: 1 0 auto;
-  min-height: 1000px;
+  padding: 1rem 2rem;
+  width: 100%;
+  max-width: 50rem;
+  margin: auto;
 }
 
 .footer {
-  min-height: 100px;
-  background-color: black;
+  padding: 0.5rem 1rem;
+}
+
+@media screen and (min-width: 480px) {
+  .header {
+    padding: 1rem 2rem;
+  }
+
+  .main {
+    padding: 2rem 4rem;
+  }
+
+  .footer {
+    padding: 1rem 2rem;
+  }
 }
 </style>
