@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, watch } from 'vue'
-import { onBeforeRouteUpdate, RouterLink, useRoute, type LocationQuery } from 'vue-router'
+import { computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
-import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
 import { useCategory } from '@/composables/api/useCategory'
 import { useCategories } from '@/composables/api/useCategories'
 import { useProducts } from '@/composables/api/useProducts'
+import { useCategoriesProductsPagination } from '@/composables/useCategoriesProductsPagination'
+
+import ItemsGrid from '@/components/ui-kit/ItemsGrid.vue'
+import WithLoader from '@/components/ui-kit/WithLoader.vue'
+import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
+import CategorySection from '@/components/CategorySection.vue'
+import CategoriesList from '@/components/CategoriesList.vue'
+import ProductCard from '@/components/ProductCard.vue'
 
 const route = useRoute()
 
@@ -16,48 +22,15 @@ const categoryId = computed(() =>
     : route.params.categoryId[0],
 )
 
-const prevQuery = ref<LocationQuery | null>(null)
-const prevId = ref<string | null>(null)
-
 const { category, productsIds, isLoading, execute } = useCategory(categoryId)
 
-const subcategoriesPagination = usePaginationWithRouter(new Set([1, 2, 3, 10]))
-const productsPagination = usePaginationWithRouter(new Set([1, 2, 3, 10]), {
-  showParam: 'showProducts',
-  pageParam: 'productsPage',
-})
+const { subcategoriesPagination, productsPagination, setUrlQueryParams } =
+  useCategoriesProductsPagination()
 
 const subCategories = useCategories({
   paginationApiParams: subcategoriesPagination.paginationApiParams,
   parentId: categoryId,
   setTotal: subcategoriesPagination.setTotal,
-})
-
-function setUrlQueryParams() {
-  productsPagination.setInitialParams(
-    productsPagination.getInitialParams(subcategoriesPagination.getInitialParams()),
-  )
-}
-
-onBeforeMount(setUrlQueryParams)
-onBeforeRouteUpdate((to, from) => {
-  if (to.params.categoryId === from.params.categoryId) {
-    return
-  }
-
-  // Back
-  if (prevId.value === to.params.categoryId && prevQuery.value) {
-    productsPagination.setTotal(Infinity)
-    subcategoriesPagination.setTotal(Infinity)
-    productsPagination.setPage(Number(prevQuery.value['productsPage']))
-    subcategoriesPagination.setPage(Number(prevQuery.value['page']))
-  } else {
-    productsPagination.setPage(1)
-    subcategoriesPagination.setPage(1)
-  }
-
-  prevId.value = from.params.categoryId as string
-  prevQuery.value = from.query
 })
 
 const products = useProducts({
@@ -82,17 +55,17 @@ watch(categoryId, () => {
 <template>
   <h1>{{ isLoading || !category ? 'Category' : category.seoTitle || category.name }}</h1>
 
-  <section>
-    <template v-if="!subCategories.isLoading.value && subCategories.collection.value.length">
-      <h2>Subcategories</h2>
-      <ul>
-        <li v-for="item in subCategories.collection.value" :key="item.id">
-          <RouterLink :to="`/categories/${item.id}`">
-            {{ item.seoTitle || item.name }}
-          </RouterLink>
-        </li>
-      </ul>
+  <CategorySection
+    v-if="subCategories.isLoading.value || subCategories.collection.value.length"
+    heading="Subcategories"
+    class="subcategories-section"
+  >
+    <CategoriesList
+      :collection="subCategories.collection.value"
+      :is-loading="subCategories.isLoading.value"
+    />
 
+    <template #pagination>
       <PaginationControl
         pagination-aria-label="Subcategories pagination"
         :limit-options="subcategoriesPagination.limitsWhitelist.value"
@@ -103,20 +76,18 @@ watch(categoryId, () => {
         @set-page="subcategoriesPagination.setPage"
       />
     </template>
-    <strong v-else-if="subCategories.isLoading.value">LOADING Subcategories</strong>
-  </section>
+  </CategorySection>
 
-  <section>
-    <template v-if="!products.isLoading.value">
-      <h2>Products</h2>
-      <ul>
-        <li v-for="item in products.collection.value" :key="item.id">
-          <RouterLink :to="`/categories/${categoryId}/products/${item.id}`">
-            {{ item.seoTitle || item.name }}
-          </RouterLink>
-        </li>
-      </ul>
-
+  <CategorySection heading="Products">
+    <WithLoader :is-loading="products.isLoading.value" loaderLabel="Loading products">
+      <ItemsGrid :collection="products.collection.value" v-slot="slotProps">
+        <ProductCard
+          :product="slotProps.item"
+          :linkTo="`/categories/${categoryId}/products/${slotProps.item.id}`"
+        />
+      </ItemsGrid>
+    </WithLoader>
+    <template #pagination>
       <PaginationControl
         pagination-aria-label="Products pagination"
         :limit-options="productsPagination.limitsWhitelist.value"
@@ -131,6 +102,11 @@ watch(categoryId, () => {
         @set-page="productsPagination.setPage"
       />
     </template>
-    <strong v-else-if="products.isLoading.value">LOADING Products</strong>
-  </section>
+  </CategorySection>
 </template>
+
+<style scoped>
+.subcategories-section {
+  margin-bottom: 4rem;
+}
+</style>
