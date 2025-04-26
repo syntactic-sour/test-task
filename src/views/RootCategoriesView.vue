@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
-import { RouterLink } from 'vue-router'
 
 import { useCategories } from '@/composables/api/useCategories'
 import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
+
 import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
+import CategoriesList from '@/components/CategoriesList.vue'
 
 const {
   limitsWhitelist,
@@ -18,7 +19,7 @@ const {
   setPage,
   getInitialParams,
   setInitialParams,
-} = usePaginationWithRouter(new Set([1, 10, 20, 30]))
+} = usePaginationWithRouter(new Set([1, 2, 10, 20]))
 
 const { collection, isLoading, execute } = useCategories({
   paginationApiParams,
@@ -34,15 +35,8 @@ onBeforeMount(() => {
 
 <template>
   <h1>Root categories</h1>
-  <ul v-if="!isLoading && collection.length">
-    <li v-for="item in collection" :key="item.id">
-      <RouterLink :to="`/categories/${item.id}`">
-        {{ item.seoTitle || item.name }}
-      </RouterLink>
-    </li>
-  </ul>
-  <strong v-else-if="isLoading">LOADING</strong>
-  <p v-else>No data</p>
+
+  <CategoriesList :collection="collection" :isLoading="isLoading" class="categories-list" />
 
   <PaginationControl
     pagination-aria-label="Categories pagination"
@@ -54,3 +48,9 @@ onBeforeMount(() => {
     @set-page="setPage"
   />
 </template>
+
+<style scoped>
+.categories-list {
+  margin: 1rem 0 2rem;
+}
+</style>
