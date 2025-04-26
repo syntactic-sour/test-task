@@ -11,6 +11,7 @@
   --vt-c-rose-red: #bf1363;
   --vt-c-carrot-orange: #f39237;
   --vt-c-yellow-green: #85cb33;
+  --vt-c-yellow-green-dark: #466d00;
 }
 
 /* semantic color variables for this project */
@@ -26,6 +27,7 @@
   --color-border: var(--vt-c-taupe-gray);
   --color-cta-hover-bg: var(--vt-c-rose-red);
   --color-cta-hover-text: var(--vt-c-baby-powder);
+  --color-price-accent: var(--vt-c-yellow-green-dark);
 
   --color-loader: var(--vt-c-carrot-orange);
 
@@ -39,6 +41,7 @@
     --color-background: var(--vt-c-raisin-black);
     --color-text: var(--vt-c-baby-powder);
     --color-links: var(--vt-c-honolulu-blue-light);
+    --color-price-accent: var(--vt-c-yellow-green);
   }
 }
 
