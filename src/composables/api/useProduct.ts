@@ -13,7 +13,7 @@ export function useProduct(id: ComputedRef<string>) {
     isLoading.value = true
   }
 
-  const { data, execute } = useFetch({
+  const { data, error, execute } = useFetch({
     fetchOptions: { method: 'GET' },
     beforeFetch,
   })(url).json<Product>()
@@ -23,5 +23,11 @@ export function useProduct(id: ComputedRef<string>) {
     isLoading.value = false
   })
 
-  return { product, execute }
+  watch(error, (error) => {
+    console.error(error)
+    product.value = null
+    isLoading.value = false
+  })
+
+  return { product, isLoading, error, execute }
 }
