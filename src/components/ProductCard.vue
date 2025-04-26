@@ -5,6 +5,8 @@ import {
   type RouteLocationAsRelativeGeneric,
 } from 'vue-router'
 
+import { useClientStoreStore } from '@/stores/mock/store'
+
 import BuyButton from '@/components/ui-kit/BuyButton.vue'
 
 const { product, linkTo } = defineProps<{
@@ -13,6 +15,7 @@ const { product, linkTo } = defineProps<{
 }>()
 
 const router = useRouter()
+const { currency } = useClientStoreStore()
 
 function handleClick() {
   router.push(linkTo)
@@ -33,7 +36,11 @@ function handleClick() {
           but irl component should be able to render headings of different levels -->
       <h3 class="product-name">{{ product.seoTitle || product.name }}</h3>
     </RouterLink>
-    <BuyButton :productId="product.id" />
+    <div class="shopping-container">
+      <strong class="price">{{ product.price }} {{ currency }}</strong>
+
+      <BuyButton :productId="product.id" />
+    </div>
   </article>
 </template>
 
@@ -75,5 +82,17 @@ function handleClick() {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 0.5rem;
+}
+
+.shopping-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.5rem 1rem;
+  gap: 1rem;
+}
+.price {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--color-price-accent);
 }
 </style>
