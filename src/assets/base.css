@@ -23,8 +23,11 @@
   --color-links-hover: var(--vt-c-honolulu-blue);
 
   --color-outline: var(--vt-c-rose-red);
-
   --color-border: var(--vt-c-taupe-gray);
+  --color-cta-hover-bg: var(--vt-c-rose-red);
+  --color-cta-hover-text: var(--vt-c-baby-powder);
+
+  --color-loader: var(--vt-c-carrot-orange);
 
   --radius-controls: 0.4rem;
 
@@ -48,7 +51,6 @@
 }
 
 body {
-  min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);
   transition:
@@ -120,4 +122,8 @@ a[href] {
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+img[src] {
+  max-width: 100%;
 }

@@ -1,29 +1,18 @@
-<!--
-    Layout that mimics position: fixed for pop-overs,
-    but allows to use position: absolute instead
-    for user-friendly zooming on mobile devices.
-
-    Check assets/layout.css for details
--->
 <template>
-  <div class="app">
-    <header class="header"><slot name="header"></slot></header>
-    <main class="main">
-      <slot></slot>
-    </main>
-    <footer class="footer"><slot name="footer"></slot></footer>
-  </div>
+  <header class="header"><slot name="header"></slot></header>
+  <main class="main">
+    <slot></slot>
+  </main>
+  <footer class="footer"><slot name="footer"></slot></footer>
 </template>
 
 <style scoped>
-.app {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: 0.5rem 1rem;
+  background: var(--color-background);
 }
 
 .main {
