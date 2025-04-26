@@ -111,6 +111,10 @@ const currentLimit = ref<number>(defaultLimit)
   flex-direction: column;
 }
 
+.pagination-count-label {
+  line-height: 2;
+}
+
 .pagination-count-select {
   padding: 0.5rem 0.8rem;
   border: 2px solid var(--color-border);
