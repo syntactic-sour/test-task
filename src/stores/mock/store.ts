@@ -5,6 +5,7 @@ import { defineStore } from 'pinia'
 
 export const useClientStoreStore = defineStore('clientStore', () => {
   const storeId = ref('')
+  const currency = ref('₱')
 
   // Mocked
   async function setStore() {
@@ -15,5 +16,5 @@ export const useClientStoreStore = defineStore('clientStore', () => {
     storeId.value = ''
   }
 
-  return { storeId, setStore, resetStore }
+  return { storeId, currency, setStore, resetStore }
 })
