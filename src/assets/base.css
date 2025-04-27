@@ -3,6 +3,7 @@
   --vt-c-baby-powder: #fbfef9;
   --vt-c-raisin-black: #191923;
   --vt-c-taupe-gray: #857885;
+  --vt-c-taupe-gray-light: #d7c9d7;
 
   --vt-c-honolulu-blue: #0e79b2;
   --vt-c-honolulu-blue-dark: #0358a3;
@@ -27,6 +28,8 @@
   --color-border: var(--vt-c-taupe-gray);
   --color-cta-hover-bg: var(--vt-c-rose-red);
   --color-cta-hover-text: var(--vt-c-baby-powder);
+  --color-secondary-hover-bg: var(--vt-c-taupe-gray-light);
+  --color-secondary-hover-text: var(--vt-c-raisin-black);
   --color-price-accent: var(--vt-c-yellow-green-dark);
 
   --color-loader: var(--vt-c-carrot-orange);
