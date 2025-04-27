@@ -6,7 +6,7 @@ import { useProduct } from '@/composables/api/useProduct'
 import { useClientStoreStore } from '@/stores/mock/store'
 
 import WithLoader from '@/components/ui-kit/WithLoader.vue'
-import BuyButton from '@/components/ui-kit/BuyButton.vue'
+import BuyButton from '@/components/BuyButton.vue'
 
 const route = useRoute()
 

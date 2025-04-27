@@ -7,7 +7,7 @@ import {
 
 import { useClientStoreStore } from '@/stores/mock/store'
 
-import BuyButton from '@/components/ui-kit/BuyButton.vue'
+import BuyButton from '@/components/BuyButton.vue'
 
 const { product, linkTo } = defineProps<{
   product: Product
