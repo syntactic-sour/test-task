@@ -27,5 +27,7 @@ useInitMock()
 .header-navigation {
   display: flex;
   justify-content: space-between;
+  max-width: 65rem;
+  margin: 0 auto;
 }
 </style>
