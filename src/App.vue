@@ -13,10 +13,21 @@ useInitMock()
 
 <template>
   <BaseLayout>
-    <template v-slot:header>
-      <RouterLink to="/categories">Categories list</RouterLink>{{ ' ' }}
-      <RouterLink to="/cart">Cart: {{ cart.productsInCartCount }}</RouterLink>
+    <template #header>
+      <nav class="header-navigation">
+        <RouterLink to="/categories">Categories list</RouterLink>{{ ' ' }}
+        <RouterLink to="/cart">Cart: {{ cart.productsInCartCount }}</RouterLink>
+      </nav>
     </template>
     <RouterView />
   </BaseLayout>
 </template>
+
+<style scoped>
+.header-navigation {
+  display: flex;
+  justify-content: space-between;
+  max-width: 65rem;
+  margin: 0 auto;
+}
+</style>

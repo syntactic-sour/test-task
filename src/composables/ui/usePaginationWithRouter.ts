@@ -55,7 +55,7 @@ export function usePaginationWithRouter(
     _setLimit(newLimit)
     const newQuery: LocationQuery = {
       ...route.query,
-      [queryParamsAlias.pageParam]: route.query[queryParamsAlias.pageParam],
+      [queryParamsAlias.pageParam]: String(currentPage.value),
       [queryParamsAlias.showParam]: String(newLimit),
     }
 

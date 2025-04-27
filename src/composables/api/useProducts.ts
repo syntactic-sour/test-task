@@ -20,7 +20,7 @@ export function useProducts({
     }
 
     if (productsIds.value.length) {
-      const start = paginationApiParams.value.offset * paginationApiParams.value.limit
+      const start = paginationApiParams.value.offset
       return productsIds.value.slice(start, start + paginationApiParams.value.limit)
     }
 
