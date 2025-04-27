@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { RouterLink } from 'vue-router'
 
 import { useProducts } from '@/composables/api/useProducts'
 import { useCartStore } from '@/stores/cart'
 
-const cart = useCartStore()
-const { productsIds, productsInCart } = storeToRefs(cart)
+import WithLoader from '@/components/ui-kit/WithLoader.vue'
+import CtaButton from '@/components/ui-kit/CtaButton.vue'
+import CartTable from '@/components/CartTable.vue'
+import CartList from '@/components/CartList.vue'
 
-const { execute, collection } = useProducts({
+const cart = useCartStore()
+const { productsIds } = storeToRefs(cart)
+const step = ref(0)
+
+const { execute, isLoading, collection } = useProducts({
   productsIds,
   manual: true,
 })
@@ -21,32 +28,60 @@ if (productsIds.value.length) {
   execute()
 }
 
-//TODO: change to a proper modal
 function handleOrder() {
+  step.value = 1
   cart.emptyCart()
-  alert('Your order is placed!')
 }
 </script>
 
 <template>
   <h1>Cart</h1>
-  <p v-if="!productsIds.length">Cart is empty.</p>
-  <!-- TODO: change to a table -->
-  <ul v-else-if="collection">
-    <li v-for="product in products" :key="product.id">
-      {{ product.name }}
-      -
-      <!-- TODO: visually-hidden text -->
-      <button type="button" @click="() => cart.removeProduct(product.id, 1)">-</button>
-      {{ productsInCart[product.id] }}
 
-      <!-- TODO: visually-hidden text -->
-      <button type="button" @click="() => cart.addProduct(product.id, 1)">+</button>
+  <WithLoader
+    v-if="step === 0 && productsIds.length"
+    :is-loading="isLoading"
+    loaderLabel="Loading cart"
+  >
+    <div v-if="collection">
+      <CartTable :products class="cart-table" />
+      <CartList :products class="cart-list" />
+      <div class="cta-wrapper">
+        <CtaButton type="button" @click="handleOrder">Place an order</CtaButton>
+      </div>
+    </div>
+  </WithLoader>
 
-      <!-- TODO: visually-hidden text -->
-      <button type="button" @click="() => cart.removeProduct(product.id)">Remove from cart</button>
-    </li>
-  </ul>
-
-  <button type="button" @click="handleOrder">Place an order</button>
+  <p v-else-if="step === 0">Cart is empty.</p>
+  <div v-else-if="step === 1">
+    <p>Your order is placed. Thank you!</p>
+    <RouterLink to="/">Back to shopping</RouterLink>
+  </div>
 </template>
+
+<style scoped>
+.cta-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+}
+
+@media (min-width: 20rem) {
+  .cta-wrapper {
+    justify-content: end;
+  }
+}
+
+.cart-table {
+  display: none;
+}
+
+@media screen and (min-width: 46rem) {
+  .cart-list {
+    display: none;
+  }
+
+  .cart-table {
+    display: table;
+  }
+}
+</style>
