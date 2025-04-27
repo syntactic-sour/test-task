@@ -19,7 +19,7 @@
   flex: 1 0 auto;
   padding: 1rem 1rem;
   width: 100%;
-  max-width: 50rem;
+  max-width: 60rem;
   margin: auto;
 }
 
@@ -27,7 +27,7 @@
   padding: 0.5rem 1rem;
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 40rem) {
   .header {
     padding: 1rem 2rem;
   }
