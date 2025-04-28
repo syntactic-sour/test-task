@@ -12,7 +12,7 @@ declare interface Category {
   alt?: string
 }
 
-declare type CategoryItem = Category | Product
+declare type CategoryItem = Category
 
 declare interface Categories extends PaginationAPI {
   items: CategoryItem[]
