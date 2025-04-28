@@ -8,18 +8,20 @@ export function useProducts({
   productsIds,
   paginationApiParams,
   manual,
+  fetchAll,
 }: {
   setTotal?: (total: number) => void
-  productsIds: Ref<string[] | number[]> | ComputedRef<string[] | number[]>
+  productsIds?: Ref<string[] | number[]> | ComputedRef<string[] | number[]>
   paginationApiParams?: ComputedRef<PaginationAPIPartial>
   manual?: boolean
+  fetchAll?: boolean
 }) {
   const idsChunk = computed(() => {
-    if (!paginationApiParams) {
+    if (productsIds && !paginationApiParams) {
       return productsIds.value
     }
 
-    if (productsIds.value.length) {
+    if (productsIds && productsIds.value.length && paginationApiParams) {
       const start = paginationApiParams.value.offset
       return productsIds.value.slice(start, start + paginationApiParams.value.limit)
     }
@@ -29,7 +31,12 @@ export function useProducts({
 
   const url = computed(() => {
     const params = new URLSearchParams({})
-    params.set('productId', idsChunk.value.join(','))
+    if (fetchAll) {
+      params.set('offset', String(paginationApiParams?.value.offset))
+      params.set('limit', String(paginationApiParams?.value.limit))
+    } else {
+      params.set('productId', idsChunk.value.join(','))
+    }
     return 'products?' + params.toString()
   })
 
@@ -37,7 +44,7 @@ export function useProducts({
   const isLoading = ref<boolean>(false)
 
   async function beforeFetch({ cancel }: BeforeFetchContext) {
-    if (!idsChunk.value.length) {
+    if (!idsChunk.value.length && !fetchAll) {
       cancel()
     }
     collection.value = []
@@ -56,10 +63,10 @@ export function useProducts({
       isLoading.value = false
       return
     }
-
     collection.value.push(...(newValue.items || []))
+
     if (setTotal) {
-      setTotal(productsIds.value.length)
+      setTotal(productsIds && !fetchAll ? productsIds.value.length : newValue.total)
     }
     isLoading.value = false
   })

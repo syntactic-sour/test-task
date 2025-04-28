@@ -2,55 +2,93 @@
 import { onBeforeMount } from 'vue'
 
 import { useCategories } from '@/composables/api/useCategories'
-import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
+import { useProducts } from '@/composables/api/useProducts'
+import { useCategoriesProductsPagination } from '@/composables/useCategoriesProductsPagination'
 
+import ItemsGrid from '@/components/ui-kit/ItemsGrid.vue'
+import WithLoader from '@/components/ui-kit/WithLoader.vue'
 import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
+import CategorySection from '@/components/CategorySection.vue'
 import CategoriesList from '@/components/CategoriesList.vue'
+import ProductCard from '@/components/ProductCard.vue'
 
 const {
-  limitsWhitelist,
-  currentLimit,
-  currentPage,
-  pagesTotal,
-  paginationApiParams,
-
-  setTotal,
-  setLimit,
-  setPage,
-  getInitialParams,
-  setInitialParams,
-} = usePaginationWithRouter(new Set([1, 2, 10, 20]))
+  subcategoriesPagination: categoriesPagination,
+  productsPagination,
+  setUrlQueryParams,
+} = useCategoriesProductsPagination()
 
 const { collection, isLoading, execute } = useCategories({
-  paginationApiParams,
-  setTotal,
+  paginationApiParams: categoriesPagination.paginationApiParams,
+  setTotal: categoriesPagination.setTotal,
+})
+
+const products = useProducts({
+  paginationApiParams: productsPagination.paginationApiParams,
+  setTotal: productsPagination.setTotal,
+  fetchAll: true,
 })
 
 execute()
+products.execute()
 
 onBeforeMount(() => {
-  setInitialParams(getInitialParams())
+  setUrlQueryParams()
 })
 </script>
 
 <template>
-  <h1>Root categories</h1>
+  <h1>Store</h1>
 
-  <CategoriesList :collection="collection" :isLoading="isLoading" class="categories-list" />
+  <CategorySection
+    v-if="isLoading || collection.length"
+    heading="Root categories"
+    class="categories-section"
+  >
+    <CategoriesList :collection :is-loading="isLoading" />
 
-  <PaginationControl
-    pagination-aria-label="Categories pagination"
-    :limit-options="limitsWhitelist"
-    :default-limit="currentLimit"
-    :pages="pagesTotal"
-    :current-page="currentPage"
-    @set-limit="setLimit"
-    @set-page="setPage"
-  />
+    <template #pagination>
+      <PaginationControl
+        pagination-aria-label="Subcategories pagination"
+        :limit-options="categoriesPagination.limitsWhitelist.value"
+        :default-limit="categoriesPagination.currentLimit.value"
+        :pages="categoriesPagination.pagesTotal.value"
+        :current-page="categoriesPagination.currentPage.value"
+        @set-limit="categoriesPagination.setLimit"
+        @set-page="categoriesPagination.setPage"
+      />
+    </template>
+  </CategorySection>
+
+  <CategorySection heading="Products">
+    <WithLoader :is-loading="products.isLoading.value" loaderLabel="Loading products">
+      <ItemsGrid :collection="products.collection.value" v-slot="slotProps">
+        <ProductCard
+          :product="slotProps.item"
+          :linkTo="`/categories/${slotProps.item.defaultCategoryId}/products/${slotProps.item.id}`"
+        />
+      </ItemsGrid>
+    </WithLoader>
+    <template #pagination>
+      <PaginationControl
+        pagination-aria-label="Products pagination"
+        :limit-options="productsPagination.limitsWhitelist.value"
+        :default-limit="productsPagination.currentLimit.value"
+        :pages="productsPagination.pagesTotal.value"
+        :current-page="productsPagination.currentPage.value"
+        :queryParamsAlias="{
+          showParam: 'showProducts',
+          pageParam: 'productsPage',
+        }"
+        @set-limit="productsPagination.setLimit"
+        @set-page="productsPagination.setPage"
+      />
+    </template>
+  </CategorySection>
 </template>
 
 <style scoped>
-.categories-list {
-  margin: 1rem 0 2rem;
+.categories-section {
+  margin-bottom: 4rem;
 }
 </style>
