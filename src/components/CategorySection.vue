@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { heading } = defineProps<{ heading: string }>()
+const { heading } = defineProps<{ heading?: string }>()
 </script>
 
 <template>
@@ -19,6 +19,6 @@ const { heading } = defineProps<{ heading: string }>()
 }
 
 .pagination-container {
-  margin-top: 2rem;
+  margin-top: 1.4rem;
 }
 </style>
