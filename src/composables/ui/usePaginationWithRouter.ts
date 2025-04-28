@@ -1,6 +1,7 @@
 // Based on https://github.com/syntactic-sour/vue-pagination
 // Written in TDD style
 
+import type { Ref, ComputedRef } from 'vue'
 import { useRoute, useRouter, type LocationQuery, type LocationQueryValue } from 'vue-router'
 import { DEFAULT_PAGINATION_LIMITS, usePagination } from './usePagination'
 
@@ -14,10 +15,24 @@ export const DEFAULT_QUERY_PARAMS_ALIAS = {
   pageParam: 'page',
 }
 
+export interface usePaginationWithRouter {
+  limitsWhitelist: Ref<Set<number>>
+  currentLimit: Ref<number, number>
+  currentPage: Ref<number, number>
+  pagesTotal: ComputedRef<number>
+  paginationApiParams: ComputedRef<PaginationAPIPartial>
+
+  setTotal: (newTotal: number) => void
+  setLimit: (newLimit: number) => void
+  setPage: (newPage: number) => void
+  getInitialParams: (oldParams?: LocationQuery) => LocationQuery | undefined
+  setInitialParams: (params?: LocationQuery) => void
+}
+
 export function usePaginationWithRouter(
   limits = DEFAULT_PAGINATION_LIMITS,
   queryParamsAlias: QueryParamsAlias = DEFAULT_QUERY_PARAMS_ALIAS,
-) {
+): usePaginationWithRouter {
   const route = useRoute()
   const router = useRouter()
 

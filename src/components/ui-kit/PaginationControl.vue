@@ -115,7 +115,13 @@ const currentLimit = ref<number>(defaultLimit)
   line-height: 2;
 }
 
+/*
+  IRL project would include custom select with all the ARIA attributes needed,
+  focus trap in dropdown and other keyboard accessibility features.
+  For the sake of simplicity, here native select is used.
+ */
 .pagination-count-select {
+  -webkit-appearance: none;
   padding: 0.5rem 0.8rem;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-controls);

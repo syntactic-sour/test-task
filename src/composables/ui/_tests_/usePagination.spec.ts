@@ -59,11 +59,11 @@ describe('usePagination', () => {
       limits: new Set([10]),
       page: 3,
     })
-    expect(() => setPage(-1)).toThrowError
+    expect(() => setPage(-1)).toThrowError()
     setTotal(0)
-    expect(() => setPage(2)).toThrowError
+    expect(() => setPage(2)).toThrowError()
     setTotal(10)
-    expect(() => setPage(2)).toThrowError
+    expect(() => setPage(2)).toThrowError()
   })
 
   it('sets page correctly', () => {

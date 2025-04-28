@@ -13,6 +13,7 @@ export function useCategories({
 }) {
   const url = computed(() => {
     const params = new URLSearchParams({
+      responseFields: 'total, items(id, name, imageUrl, thumbnail)',
       offset: String(paginationApiParams.value.offset || 0),
       limit: String(paginationApiParams.value.limit || 10),
       parent: parentId ? String(parentId.value) : '0',
@@ -21,7 +22,7 @@ export function useCategories({
     return 'categories?' + params.toString()
   })
 
-  const collection = ref<CategoryItem[]>([])
+  const collection = ref<Category[]>([])
   const isLoading = ref<boolean>(false)
 
   async function beforeFetch() {
@@ -44,7 +45,15 @@ export function useCategories({
       return
     }
 
-    collection.value.push(...(newValue.items || []))
+    collection.value.push(
+      ...(newValue.items || []).map((item) => {
+        // Mocking images as API doesnt return them for given store
+        if (!item.imageUrl && !item.thumbnail) {
+          item.imageUrl = 'https://cdn2.thecatapi.com/images/edp.jpg'
+        }
+        return item
+      }),
+    )
     if (setTotal) {
       setTotal(newValue.total)
     }

@@ -7,9 +7,12 @@ declare interface Category {
   orderBy: number
   productIds: string[]
   parentId?: string | number
+  thumbnail?: string
+  imageUrl?: string
+  alt?: string
 }
 
-declare type CategoryItem = Category | Product
+declare type CategoryItem = Category
 
 declare interface Categories extends PaginationAPI {
   items: CategoryItem[]

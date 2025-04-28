@@ -1,56 +1,38 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
-
 import { useCategories } from '@/composables/api/useCategories'
-import { usePaginationWithRouter } from '@/composables/ui/usePaginationWithRouter'
+import { useProducts } from '@/composables/api/useProducts'
+import { useCategoriesProductsPagination } from '@/composables/useCategoriesProductsPagination'
 
-import PaginationControl from '@/components/ui-kit/PaginationControl.vue'
-import CategoriesList from '@/components/CategoriesList.vue'
+import CategoryContent from '@/components/CategoryContent.vue'
 
-const {
-  limitsWhitelist,
-  currentLimit,
-  currentPage,
-  pagesTotal,
-  paginationApiParams,
-
-  setTotal,
-  setLimit,
-  setPage,
-  getInitialParams,
-  setInitialParams,
-} = usePaginationWithRouter(new Set([1, 2, 10, 20]))
+const { subcategoriesPagination: categoriesPagination, productsPagination } =
+  useCategoriesProductsPagination()
 
 const { collection, isLoading, execute } = useCategories({
-  paginationApiParams,
-  setTotal,
+  paginationApiParams: categoriesPagination.paginationApiParams,
+  setTotal: categoriesPagination.setTotal,
+})
+
+const products = useProducts({
+  paginationApiParams: productsPagination.paginationApiParams,
+  setTotal: productsPagination.setTotal,
+  fetchAll: true,
 })
 
 execute()
-
-onBeforeMount(() => {
-  setInitialParams(getInitialParams())
-})
+products.execute()
 </script>
 
 <template>
-  <h1>Root categories</h1>
+  <h1>Store</h1>
 
-  <CategoriesList :collection="collection" :isLoading="isLoading" class="categories-list" />
-
-  <PaginationControl
-    pagination-aria-label="Categories pagination"
-    :limit-options="limitsWhitelist"
-    :default-limit="currentLimit"
-    :pages="pagesTotal"
-    :current-page="currentPage"
-    @set-limit="setLimit"
-    @set-page="setPage"
+  <CategoryContent
+    categoriesHeading="Root categories"
+    :categoriesPagination
+    :productsPagination
+    :categories="collection"
+    :products="products.collection.value"
+    :isLoadingCategories="isLoading"
+    :isLoadingProducts="products.isLoading.value"
   />
 </template>
-
-<style scoped>
-.categories-list {
-  margin: 1rem 0 2rem;
-}
-</style>
