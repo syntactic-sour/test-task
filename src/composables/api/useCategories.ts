@@ -22,7 +22,7 @@ export function useCategories({
     return 'categories?' + params.toString()
   })
 
-  const collection = ref<CategoryItem[]>([])
+  const collection = ref<Category[]>([])
   const isLoading = ref<boolean>(false)
 
   async function beforeFetch() {
