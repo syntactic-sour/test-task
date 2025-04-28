@@ -8,24 +8,24 @@ Those are the only copilots that were used.
 
 ## Done:
 
-[x] SPA & basic router configuration
-[x] Mocked user stores: auth (where token is stored) and client's store (where storeId is stored)
-[x] Composables for fetching categories and products with proper limit, offset and other params
-[x] Categories and Subcategories pages
-[x] Mocked images for categories
-[x] Product card and product page
-[x] Mocked currency
-[x] Persistent cart state
-[x] Mobile-first cart contents: list or table depending on amount of free space. Table can be used as a basis for print styles (print styles not implemented though)
-[x] Two variants of color theme, depending on user's device settings
-[x] Sizings in rems for user's custom font size settings (tested with extra large in Chrome among others)
+- [x] SPA & basic router configuration
+- [x] Mocked user stores: auth (where token is stored) and client's store (where storeId is stored)
+- [x] Composables for fetching categories and products with proper limit, offset and other params
+- [x] Categories and Subcategories pages
+- [x] Mocked images for categories
+- [x] Product card and product page
+- [x] Mocked currency
+- [x] Persistent cart state
+- [x] Mobile-first cart contents: list or table depending on amount of free space. Table can be used as a basis for print styles (print styles not implemented though)
+- [x] Two variants of color theme, depending on user's device settings
+- [x] Sizings in rems for user's custom font size settings (tested with extra large in Chrome among others)
 
 ## TODO:
 
-[] Change title and set focus when routing
-[] Add 404
-[] Add live region for accessibility
-[] E2E tests
+- [] Change title and set focus when routing
+- [] Add 404
+- [] Add live region for accessibility
+- [] E2E tests
 
 ## Run locally
 
